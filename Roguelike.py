@@ -39,17 +39,6 @@ def over_field(obj_rct: pg.Rect) -> bool:
     return False
 
 
-class Weapon(pg.sprite.Sprite):
-    """
-    Heroクラスをベースに武器にまつわるクラス
-    引数：Heroクラス
-    """
-    def __init__(self, hero):
-        super().__init__()
-
-    def update():
-        pass
-
 def check_bound(obj_rct: pg.Rect) -> tuple[bool, bool]:
     """
     画面内判定 : 中のときTrue
@@ -111,8 +100,8 @@ class Hero:
         self.rct.move_ip(sum_mv)
         if check_bound(self.rct) != (True, True):
             self.rct.move_ip(-sum_mv[0], -sum_mv[1])
-        if any(sum_mv): # sum_mv両方0の時のみFalse
-            self.img = __class__.imgs[tuple([_/abs(_) if _ != 0 else 0 for _ in sum_mv])] # __class__.imgsのkeyの値に整形
+        if any(sum_mv):  # sum_mv両方0の時のみFalse
+            self.img = __class__.imgs[tuple([_/abs(_) if _ != 0 else 0 for _ in sum_mv])]  # __class__.imgsのkeyの値に整形
         screen.blit(self.img, self.rct)
 
 
@@ -127,6 +116,19 @@ class Hero:
                 ttl_mv[0] += mv[0]
                 ttl_mv[1] += mv[1]
         return ttl_mv
+
+
+class Weapon(pg.sprite.Sprite):
+    """
+    Heroクラスをベースに武器にまつわるクラス
+    引数：Heroクラス
+    """
+    def __init__(self, hero: Hero):
+        super().__init__()
+        self.image = pg.draw.circle(sc, (255, 0, 0), (hero.centerx, hero.centery), 30, width=0)
+
+    def update():
+        pass
 
 
 def main():
@@ -145,7 +147,8 @@ def main():
 
     while True:
         # hero = Hero()
-        key_lst = pg.key.get_pressed()
+        if hp > 0:
+            key_lst = pg.key.get_pressed()
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 return 0
@@ -153,8 +156,6 @@ def main():
         for i in range(90):
             for j in range(90):
                 screen.blit(bg_img, [-WIDTH + i*WIDTH/30 + (total_dist[0]%(WIDTH/30)), -HEIGHT + j*HEIGHT/30+ (total_dist[1]%(HEIGHT/30))])
-
-
         hero.update(key_lst, spd, screen)
         pg.display.update()
         tmr += 1
@@ -165,3 +166,4 @@ if __name__ == "__main__":
     main()
     pg.quit()
     sys.exit()
+    
